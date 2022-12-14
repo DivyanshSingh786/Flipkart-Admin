@@ -1,4 +1,4 @@
-const baseUrl = "https://flipkart-backend-ft7h.vercel.app/";
+const baseUrl = "https://flipkart-backend-ft7h.vercel.app";
 //const baseUrl = "http://localhost:2000";
 
 export const api = `${baseUrl}/api`;
