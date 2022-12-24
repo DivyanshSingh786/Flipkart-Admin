@@ -26,12 +26,13 @@ import AddCategoryModal from "../components/Category/AddCategoryModal";
 import "../css/Category.css";
 import DeleteCategoryModal from "../components/Category/DeleteCategoryModal";
 import { useEffect } from "react";
+import { UploadImage } from "../components/UploadImage";
 
 const Category = (props) => {
   const category = useSelector((state) => state.category);
   const [categoryName, setCategoryName] = useState("");
   const [parentCategoryId, setParentCategoryId] = useState("");
-  const [categoryImage, setCategoryImage] = useState("");
+  const [categoryImage, setCategoryImage] = useState([]);
   const [show, setShow] = useState(false);
   const [checked, setChecked] = useState([]);
   const [expanded, setExpanded] = useState([]);
@@ -47,20 +48,22 @@ const Category = (props) => {
     }
   }, [category.loading]);
 
-  const handleClose = () => {
-    const form = new FormData();
+  const handleClose = async () => {
+    // const form = new FormData();
     if(categoryName === ""){
       alert("Name is required");
       setShow(false);
       return;
     }
-    form.append("name", categoryName);
-    form.append("parentId", parentCategoryId);
-    form.append("categoryImage", categoryImage);
-    console.log(form);
-    dispatch(addCategory(form));
+    const categoryPicture = await UploadImage(categoryImage);
+    console.log(categoryPicture);
+    const newObj = {
+      name: categoryName, parentId: parentCategoryId, categoryPicture
+    };
+    dispatch(addCategory(newObj));
     setCategoryName("");
     setParentCategoryId("");
+    setCategoryImage([]);
     setShow(false);
   };
   const handleShow = () => setShow(true);
@@ -94,7 +97,7 @@ const Category = (props) => {
   };
 
   const handleCategoryImage = (e) => {
-    setCategoryImage(e.target.files[0]);
+    setCategoryImage([...categoryImage, e.target.files[0]]);
   };
 
   const updateCategory = () => {

@@ -5,8 +5,8 @@ import Input from "../components/UI/Input";
 import Modal from "../components/UI/Modal";
 import { useDispatch, useSelector } from "react-redux";
 import { addProduct, deleteProductById } from "../actions";
-import { generatePublicUrl } from "../urlConfig";
 import '../css/Products.css';
+import { UploadImage } from "../components/UploadImage";
 
 const Products = (props) => {
   const [name, setName] = useState("");
@@ -27,19 +27,22 @@ const Products = (props) => {
     setShow(false);
   };
 
-  const submitProductForm = () => {
-    const form = new FormData();
-    form.append("name", name);
-    form.append("quantity", quantity);
-    form.append("price", price);
-    form.append("description", description);
-    form.append("category", categoryId);
+  const submitProductForm = async() => {
 
-    for (let pic of productPictures) {
-      form.append("productPicture", pic);
+    const productPicture = await UploadImage(productPictures);
+    const newObj = {
+      name, quantity, price, description, category: categoryId, productPicture
     }
-
-    dispatch(addProduct(form)).then(() => setShow(false));
+    dispatch(addProduct(newObj))
+    .then(() => setShow(false))
+    .then(()=>{
+      setName("");
+      setQuantity("");
+      setPrice("");
+      setDescription("");
+      setCategoryId("");
+      setProductPictures([]);
+    })
   };
 
   const handleShow = () => setShow(true);
@@ -195,7 +198,7 @@ const Products = (props) => {
           </Col>
           <Col md="6">
             <label className="key">Category</label>
-            <p className="value">{(product.category != null) ? product.category.name : "--"}</p>
+            <p className="value">{(productDetails.category != null) ? productDetails.category.name : "--"}</p>
           </Col>
         </Row>
         <Row>
@@ -210,7 +213,6 @@ const Products = (props) => {
             <div style={{ display: "flex" }}>
               {productDetails.productPictures.map((picture) => (
                 <div className="productImgContainer">
-                  <img src={generatePublicUrl(picture.img)} alt="" />
                   <img src={picture.img} alt="" />
                 </div>
               ))}

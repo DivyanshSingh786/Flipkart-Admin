@@ -117,6 +117,7 @@ function App() {
 
         <Route exact path="/signin" element={<Signin />} />
         <Route exact path="/signup" element={<Signup />} />
+        {/* <Route exact path="/uploadimage" element={<UploadFile />} /> */}
       </Routes>
     </div>
   );

@@ -6,6 +6,7 @@ import Input from "../components/UI/Input";
 import Modal from "../components/UI/Modal";
 import linearCategories from "../helpers/linearCategories";
 import { createPage } from "../actions";
+import { UploadImage } from "../components/UploadImage";
 
 const Page = () => {
   const [createModal, setCreateModal] = useState(false);
@@ -54,7 +55,7 @@ const Page = () => {
     setProducts([...products, e.target.files[0]]);
   };
 
-  const submitPageForm = (e) => {
+  const submitPageForm = async (e) => {
     // e.target.preventDefault();
 
     if (title === "") {
@@ -63,19 +64,25 @@ const Page = () => {
       return;
     }
 
-    const form = new FormData();
-    form.append("title", title);
-    form.append("description", desc);
-    form.append("category", categoryId);
-    form.append("type", type);
-    banners.forEach((banner, index) => {
-      form.append("banners", banner);
-    });
-    products.forEach((product, index) => {
-      form.append("products", product);
-    });
-
-    dispatch(createPage(form));
+    // const form = new FormData();
+    // form.append("title", title);
+    // form.append("description", desc);
+    // form.append("category", categoryId);
+    // form.append("type", type);
+    // banners.forEach((banner, index) => {
+    //   form.append("banners", banner);
+    // });
+    // products.forEach((product, index) => {
+    //   form.append("products", product);
+    // });
+    const bannersPicture = await UploadImage(banners);
+    const productsPicture = await UploadImage(products);
+    const newObj = {
+      title, description: desc, category: categoryId, type, banners: bannersPicture, products: productsPicture
+    };
+    dispatch(createPage(newObj));
+    setBanners([]);
+    setProducts([]);
   };
 
   const renderCreatePageModal = () => {
